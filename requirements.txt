@@ -1,4 +1,0 @@
-tqdm
-pandas
-pymongo[srv]
-dotenv
