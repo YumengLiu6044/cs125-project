@@ -1,5 +1,5 @@
 from pymongo import AsyncMongoClient
-from core.constants import DATABASE_URL, DATABASE_NAME
+from constants import DATABASE_URL, DATABASE_NAME
 
 
 class MongoDBClient:
