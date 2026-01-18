@@ -3,13 +3,13 @@ import json
 from tqdm import tqdm
 from pymongo.mongo_client import MongoClient
 import dotenv
-dotenv.load_dotenv()
+dotenv.load_dotenv("../backend/.env")
 import os
 
 uri = os.getenv("MONGO_DB_URI")
 # Create a new client and connect to the server
 client = MongoClient(uri)
-database = client["cook-book"]
+database = client["cook-book-db"]
 collection = database["recipes"]
 
 
@@ -56,7 +56,7 @@ df = pd.read_csv(CSV_FILE, encoding="utf-8")
 
 processed_rows = []
 
-for _, row in tqdm(df.iterrows(), len=df.shape[0]):
+for _, row in tqdm(df.iterrows(), total=len(df)):
     row_dict = row.to_dict()
 
     # Parse JSON fields

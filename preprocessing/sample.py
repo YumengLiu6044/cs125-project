@@ -4,7 +4,7 @@ import csv
 import random
 from tqdm import tqdm
 
-PERCENTAGE = 0.1
+PERCENTAGE = 0.2
 
 original_file_path = Path("recipes-with-nutrition.csv")
 resampled_file_path = Path("recipes-with-nutrition-sample.csv")
