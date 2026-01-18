@@ -31,6 +31,10 @@ const ButtonStyles = {
     pressable: 'bg-orange-500 active:bg-orange-600',
     text: '',
   },
+  simple: {
+    pressable: 'active:bg-transparent',
+    text: '',
+  },
   wire: {
     pressable: 'border border-gray-300 active:bg-gray-100',
     text: '',
