@@ -8,7 +8,7 @@ import {
   DMSans_700Bold,
 } from '@expo-google-fonts/dm-sans';
 import './global.css';
-import StyledButton from 'components/StyledButton';
+import Button from 'components/Button';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -22,9 +22,9 @@ export default function App() {
 
   return (
     <View className="bg-bianca flex gap-4 h-screen w-screen items-center justify-center px-3">
-      <StyledButton title="My Button"></StyledButton>
-      <StyledButton title="My secondary button" style='wire'></StyledButton>
-      <StyledButton title="My muted button" style='muted'></StyledButton>
+      <Button title="My Button"></Button>
+      <Button title="My secondary button" style='wire'></Button>
+      <Button title="My muted button" style='muted'></Button>
     </View>
   );
 }
