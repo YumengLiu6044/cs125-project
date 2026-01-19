@@ -4,9 +4,9 @@ import {
 	View,
 	StyleSheet,
 	GestureResponderEvent,
-  ViewStyle,
+	ViewStyle,
 } from "react-native";
-import CustomText from "./CustomText";
+import CustomText from "./Text";
 import { Colors } from "@/constants/theme";
 
 interface ButtonProps {
@@ -24,7 +24,7 @@ export default function Button({
 	variant = "primary",
 	icon,
 	disabled = false,
-  style
+	style,
 }: ButtonProps) {
 	const selectedStyle = ButtonStyles[variant];
 
@@ -37,7 +37,7 @@ export default function Button({
 				selectedStyle.pressable,
 				pressed && selectedStyle.pressablePressed,
 				disabled && styles.disabled,
-        style
+				style,
 			]}
 			accessibilityLabel={title}
 		>

@@ -5,6 +5,7 @@ type FontWeight = "light" | "regular" | "medium" | "semibold" | "bold";
 
 interface CustomTextProps extends TextProps {
 	weight?: FontWeight;
+	size?: number;
 	style?: StyleProp<TextStyle>;
 }
 
@@ -18,10 +19,11 @@ const fontFamilyMap: Record<FontWeight, string> = {
 
 export default function CustomText({
 	weight = "regular",
+	size=18,
 	style,
 	...props
 }: CustomTextProps) {
 	const fontFamily = fontFamilyMap[weight];
 
-	return <RNText {...props} style={[{ fontFamily }, style]} />;
+	return <RNText {...props} style={[{ fontFamily, fontSize: size }, style]} />;
 }

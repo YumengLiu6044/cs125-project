@@ -1,13 +1,18 @@
+import { Colors } from '@/constants/theme';
+import { StyleSheet, ViewStyle } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-export const Container = ({ children }: { children: React.ReactNode }) => {
+export const Container = ({ children, style }: { children?: React.ReactNode, style?: ViewStyle }) => {
   return (
-    <SafeAreaProvider className={styles.container}>
-      <SafeAreaView>{children}</SafeAreaView>
+    <SafeAreaProvider style={styles.container}>
+      <SafeAreaView style={[styles.container, style]}>{children}</SafeAreaView>
     </SafeAreaProvider>
   );
 };
 
-const styles = {
-  container: 'flex flex-1 m-6',
-};
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.globalBackground
+  }
+})
