@@ -1,7 +1,7 @@
 import Button from "@/components/Button";
 import { Container } from "@/components/Container";
 import Text from "@/components/Text";
-import { Layout } from "@/constants/theme";
+import { Colors, Layout, Typography } from "@/constants/theme";
 import { Link } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
 
@@ -14,7 +14,7 @@ export default function Index() {
 					style={styles.logoImageStyle}
 				></Image>
 
-				<Text size={43} weight="semibold">
+				<Text size={45} weight="bold">
 					Cook Book
 				</Text>
 			</View>
@@ -26,8 +26,8 @@ export default function Index() {
 						style={styles.getStartedButton}
 					></Button>
 				</Link>
-				<View style={styles.alreadyAMember}>
-					<Text>Already a member?</Text>
+				<View style={styles.alreadyAMemberView}>
+					<Text style={styles.alreadyAMemberText}>Already a member?</Text>
 					<Link href="/auth/login" asChild>
 						<Text style={styles.loginLink}>Login</Text>
 					</Link>
@@ -63,13 +63,17 @@ const styles = StyleSheet.create({
 	getStartedButton: {
 		width: "100%",
 	},
-	alreadyAMember: {
+	alreadyAMemberView: {
 		display: "flex",
 		flexDirection: "row",
 		alignItems: "center",
 		gap: Layout.gap.xs,
 	},
+  alreadyAMemberText: {
+    color: Colors.gray[500]
+  },
 	loginLink: {
 		textDecorationLine: "underline",
+    fontFamily: Typography.fontFamily.medium
 	},
 });

@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 18,
-		color: "#fff",
+		color: Colors.white,
 	},
 	disabled: {
 		opacity: 0.6,
