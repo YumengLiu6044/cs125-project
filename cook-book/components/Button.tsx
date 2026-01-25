@@ -11,7 +11,7 @@ import { Colors } from "@/constants/theme";
 
 interface ButtonProps {
 	onPress?: (event: GestureResponderEvent) => void;
-	title: string;
+	children?: ReactNode;
 	variant?: keyof typeof ButtonStyles;
 	style?: ViewStyle;
 	icon?: ReactNode | (() => ReactNode);
@@ -20,11 +20,11 @@ interface ButtonProps {
 
 export default function Button({
 	onPress,
-	title,
 	variant = "primary",
 	icon,
 	disabled = false,
 	style,
+	children
 }: ButtonProps) {
 	const selectedStyle = ButtonStyles[variant];
 
@@ -39,7 +39,6 @@ export default function Button({
 				disabled && styles.disabled,
 				style,
 			]}
-			accessibilityLabel={title}
 		>
 			{icon && (
 				<View style={styles.icon}>
@@ -47,7 +46,7 @@ export default function Button({
 				</View>
 			)}
 			<CustomText weight="bold" style={[styles.text, selectedStyle.text]}>
-				{title}
+				{children}
 			</CustomText>
 		</Pressable>
 	);

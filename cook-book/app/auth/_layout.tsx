@@ -6,12 +6,24 @@ export default function Layout() {
 		<Stack
 			screenOptions={{
 				headerShown: false,
-        animation: "none"
+				animation: "none",
 			}}
 		>
 			<Stack.Screen name="index"></Stack.Screen>
-			<Stack.Screen name="login"></Stack.Screen>
-			<Stack.Screen name="register"></Stack.Screen>
+			<Stack.Screen
+				name="login"
+				options={{
+					animation: "slide_from_right",
+					gestureEnabled: true,
+				}}
+			></Stack.Screen>
+			<Stack.Screen
+				name="register"
+				options={{
+					gestureEnabled: true,
+					animation: "slide_from_right",
+				}}
+			></Stack.Screen>
 		</Stack>
 	);
 }

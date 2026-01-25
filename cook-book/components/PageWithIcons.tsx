@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Container } from "./Container";
 import { Layout } from "@/constants/theme";
 import { ReactNode } from "react";
@@ -7,6 +7,8 @@ interface PageWithIconsProps {
 	children?: ReactNode;
 	leftIcon?: ReactNode;
 	rightIcon?: ReactNode;
+
+	style?: StyleProp<ViewStyle>;
 
 	onLeftIconClick?: () => void;
 	onRightIconClick?: () => void;
@@ -18,6 +20,7 @@ export default function PageWithIcons({
 	rightIcon,
 	onLeftIconClick,
 	onRightIconClick,
+	style
 }: PageWithIconsProps) {
 	return (
 		<Container style={styles.outerView}>
@@ -26,7 +29,7 @@ export default function PageWithIcons({
 				<View style={styles.spacerView}></View>
 				<Pressable onPress={onRightIconClick}>{rightIcon}</Pressable>
 			</View>
-			<View style={styles.contentView}>{children}</View>
+			<View style={[styles.contentView, style]}>{children}</View>
 		</Container>
 	);
 }
