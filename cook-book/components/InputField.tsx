@@ -1,6 +1,12 @@
 // InputField.tsx
 import React from "react";
-import { TextInput, TextInputProps, View, StyleSheet } from "react-native";
+import {
+	TextInput,
+	TextInputProps,
+	View,
+	StyleSheet,
+	Pressable,
+} from "react-native";
 import { CircleCheck, Eye, EyeOff, Info } from "lucide-react-native";
 import { Colors } from "@/constants/theme";
 
@@ -11,6 +17,8 @@ interface InputFieldProps {
 	variant?: keyof typeof InputStyles;
 	textContentType?: TextInputProps["textContentType"];
 	autocomplete?: TextInputProps["autoComplete"];
+	onPressIcon?: () => void;
+	hasError?: boolean;
 }
 
 export default function InputField({
@@ -20,6 +28,8 @@ export default function InputField({
 	variant = "default",
 	textContentType = "none",
 	autocomplete,
+	onPressIcon,
+	hasError=false
 }: InputFieldProps) {
 	const currentStyle = InputStyles[variant];
 
@@ -30,13 +40,15 @@ export default function InputField({
 				placeholder={placeholder}
 				onChangeText={onChangeText}
 				placeholderTextColor={Colors.gray[400]}
-				style={[styles.input, currentStyle.input]}
+				style={[styles.input, currentStyle.input, hasError && styles.errorStyle]}
 				secureTextEntry={variant === "passwordHide"}
 				textContentType={textContentType}
 				autoComplete={autocomplete}
 			/>
 			{currentStyle.Icon && (
-				<View style={styles.iconWrapper}>{currentStyle.Icon}</View>
+				<Pressable style={styles.iconWrapper} onPress={onPressIcon}>
+					{currentStyle.Icon}
+				</Pressable>
 			)}
 		</View>
 	);
@@ -62,17 +74,20 @@ const styles = StyleSheet.create({
 		top: "50%",
 		transform: [{ translateY: -10 }], // vertically center assuming icon ~20px
 	},
+	errorStyle: {
+		borderColor: Colors.red[500]
+	}
 });
 
 // Styles adapted from Tailwind-like system
-const InputStyles = {
+export const InputStyles = {
 	default: {
 		container: {},
 		input: {
 			borderWidth: 1,
 			borderColor: Colors.gray[200],
 			backgroundColor: Colors.white,
-      paddingRight: 20
+			paddingRight: 20,
 		},
 		Icon: null,
 	},
@@ -84,15 +99,6 @@ const InputStyles = {
 			backgroundColor: Colors.white,
 		},
 		Icon: <CircleCheck size={20} color={Colors.green[500]} />,
-	},
-	error: {
-		container: {},
-		input: {
-			borderWidth: 1,
-			borderColor: Colors.red[500],
-			backgroundColor: Colors.white,
-		},
-		Icon: <Info size={20} color={Colors.red[500]} />,
 	},
 	passwordShow: {
 		container: {},

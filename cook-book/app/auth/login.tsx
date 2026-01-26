@@ -12,23 +12,83 @@ import { useRouter } from "expo-router";
 import Text from "@/components/Text";
 import Link from "@/components/Link";
 import { Layout, Typography } from "@/constants/theme";
-import InputField from "@/components/InputField";
+import InputField, { InputStyles } from "@/components/InputField";
 import Button from "@/components/Button";
 import { toast } from "sonner-native";
 import Spinner from "@/components/Spinner";
+import { supabase } from "@/lib/supabase";
 
-createLucideIcon
+createLucideIcon;
 export default function Login() {
 	const router = useRouter();
 
 	const [isLoading, setIsLoading] = useState(false);
 
+	// Form states
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+
+	// Error states
+	const [emailError, setEmailError] = useState(false);
+	const [passwordError, setPasswordError] = useState(false);
+
+	const [passwordFieldVariant, setPasswordFieldVariant] =
+		useState<keyof typeof InputStyles>("passwordHide");
+
 	const handleLogin = useCallback(() => {
 		Keyboard.dismiss();
+
+		// Reset errors
+		setEmailError(false);
+		setPasswordError(false);
+
+		let hasError = false;
+
+		if (!email.length) {
+			setEmailError(true);
+			toast.error("Email is required");
+			hasError = true;
+		}
+		if (!password.length) {
+			setPasswordError(true);
+			toast.error("Password is required");
+			hasError = true;
+		}
+
+		if (hasError) return;
+
 		setIsLoading(true);
-		setTimeout(() => {
-			setIsLoading(false);
-		}, 1000);
+
+		supabase.auth
+			.signInWithPassword({ email, password })
+			.then((e) => {
+				if (e.error !== null) {
+					toast.error(e.error.message);
+					return;
+				}
+
+				router.replace("/home");
+			})
+			.catch((e) => {
+				toast.error(e);
+			})
+			.finally(() => setIsLoading(false));
+	}, [email, password]);
+
+	const handlePasswordToggle = useCallback(() => {
+		setPasswordFieldVariant((prev) =>
+			prev === "passwordHide" ? "passwordShow" : "passwordHide",
+		);
+	}, []);
+
+	const handleEmailChange = useCallback((text: string) => {
+		setEmail(text);
+		setEmailError(false);
+	}, []);
+
+	const handlePasswordChange = useCallback((text: string) => {
+		setPassword(text);
+		setPasswordError(false);
 	}, []);
 
 	return (
@@ -47,6 +107,9 @@ export default function Login() {
 					<View>
 						<Text style={styles.inputLabel}>Email</Text>
 						<InputField
+							value={email}
+							onChangeText={handleEmailChange}
+							hasError={emailError}
 							autocomplete="email"
 							textContentType="emailAddress"
 						></InputField>
@@ -54,7 +117,13 @@ export default function Login() {
 
 					<View>
 						<Text style={styles.inputLabel}>Password</Text>
-						<InputField variant="passwordHide"></InputField>
+						<InputField
+							variant={passwordFieldVariant}
+							value={password}
+							onChangeText={handlePasswordChange}
+							hasError={passwordError}
+							onPressIcon={handlePasswordToggle}
+						></InputField>
 					</View>
 
 					<Link href="/auth/forgot">Forgot Password?</Link>
@@ -95,7 +164,5 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "flex-end",
 	},
-	loaderIcon: {
-
-	}
+	loaderIcon: {},
 });

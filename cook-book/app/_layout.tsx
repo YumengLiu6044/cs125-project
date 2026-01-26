@@ -1,53 +1,44 @@
-import { SplashScreen, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Toaster } from 'sonner-native';
+import { Toaster } from "sonner-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import {
-	useFonts,
-	DMSans_300Light,
-	DMSans_400Regular,
-	DMSans_500Medium,
-	DMSans_600SemiBold,
-	DMSans_700Bold,
-} from "@expo-google-fonts/dm-sans";
 import { Colors } from "@/constants/theme";
-import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { SplashScreenController } from "@/components/SplashScreenController";
 
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-	const [isLoggedIn, _] = useState(false);
-	const [fontsLoaded] = useFonts({
-		DMSans_300Light,
-		DMSans_400Regular,
-		DMSans_500Medium,
-		DMSans_600SemiBold,
-		DMSans_700Bold,
-	});
-
-	useEffect(() => {
-		if (fontsLoaded) SplashScreen.hide();
-	}, [fontsLoaded]);
-
-	if (!fontsLoaded) return null;
+function RootNavigator() {
+	const { isLoggedIn } = useAuth();
 
 	return (
-		<GestureHandlerRootView>
-			<Toaster
-				theme="light"
-			></Toaster>
-			<Stack
-				screenOptions={{
-					headerShown: false,
-					contentStyle: { backgroundColor: Colors.globalBackground },
-				}}
-			>
+		<Stack
+			screenOptions={{
+				headerShown: false,
+				contentStyle: { 
+					backgroundColor: Colors.globalBackground 
+				},
+			}}
+		>
+			<Stack.Protected guard={!isLoggedIn}>
 				<Stack.Screen name="auth" />
+			</Stack.Protected>
 
-				<Stack.Protected guard={isLoggedIn}></Stack.Protected>
-			</Stack>
-			<StatusBar style="dark" />
-		</GestureHandlerRootView>
+			<Stack.Protected guard={isLoggedIn}>
+				<Stack.Screen name="onboarding"></Stack.Screen>
+				<Stack.Screen name="home"></Stack.Screen>
+			</Stack.Protected>
+		</Stack>
+	);
+}
+
+export default function RootLayout() {
+	return (
+		<AuthProvider>
+			<GestureHandlerRootView>
+				<Toaster theme="light"></Toaster>
+				<RootNavigator></RootNavigator>
+				<SplashScreenController></SplashScreenController>
+				<StatusBar style="dark" />
+			</GestureHandlerRootView>
+		</AuthProvider>
 	);
 }
