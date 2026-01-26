@@ -16,6 +16,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
 		textDecorationLine: "underline",
 		fontFamily: Typography.fontFamily.medium,
-    fontSize: Typography.fontSize.lg
+    fontSize: Typography.fontSize.md
 	},
 });

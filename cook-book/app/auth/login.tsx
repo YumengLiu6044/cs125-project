@@ -1,21 +1,35 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import {
+	ActivityIndicator,
 	Keyboard,
 	StyleSheet,
 	TouchableWithoutFeedback,
 	View,
 } from "react-native";
 import PageWithIcons from "@/components/PageWithIcons";
-import { ArrowLeft, Search } from "lucide-react-native";
+import { ArrowLeft, createLucideIcon, Loader2 } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import Text from "@/components/Text";
 import Link from "@/components/Link";
 import { Layout, Typography } from "@/constants/theme";
 import InputField from "@/components/InputField";
 import Button from "@/components/Button";
+import { toast } from "sonner-native";
+import Spinner from "@/components/Spinner";
 
+createLucideIcon
 export default function Login() {
 	const router = useRouter();
+
+	const [isLoading, setIsLoading] = useState(false);
+
+	const handleLogin = useCallback(() => {
+		Keyboard.dismiss();
+		setIsLoading(true);
+		setTimeout(() => {
+			setIsLoading(false);
+		}, 1000);
+	}, []);
 
 	return (
 		<PageWithIcons
@@ -45,7 +59,11 @@ export default function Login() {
 
 					<Link href="/auth/forgot">Forgot Password?</Link>
 
-					<Button variant="muted" disabled>
+					<Button
+						onPress={handleLogin}
+						disabled={isLoading}
+						icon={isLoading && <Spinner></Spinner>}
+					>
 						Login
 					</Button>
 
@@ -77,4 +95,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "flex-end",
 	},
+	loaderIcon: {
+
+	}
 });

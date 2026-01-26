@@ -1,5 +1,7 @@
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { Toaster } from 'sonner-native';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
 	useFonts,
 	DMSans_300Light,
@@ -31,7 +33,10 @@ export default function RootLayout() {
 	if (!fontsLoaded) return null;
 
 	return (
-		<>
+		<GestureHandlerRootView>
+			<Toaster
+				theme="light"
+			></Toaster>
 			<Stack
 				screenOptions={{
 					headerShown: false,
@@ -43,6 +48,6 @@ export default function RootLayout() {
 				<Stack.Protected guard={isLoggedIn}></Stack.Protected>
 			</Stack>
 			<StatusBar style="dark" />
-		</>
+		</GestureHandlerRootView>
 	);
 }

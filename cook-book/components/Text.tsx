@@ -19,7 +19,7 @@ const fontFamilyMap: Record<FontWeight, string> = {
 
 export default function CustomText({
 	weight = "regular",
-	size=18,
+	size=16,
 	style,
 	...props
 }: CustomTextProps) {

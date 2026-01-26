@@ -7,7 +7,7 @@ import {
 	ViewStyle,
 } from "react-native";
 import CustomText from "./Text";
-import { Colors } from "@/constants/theme";
+import { Colors, Layout } from "@/constants/theme";
 
 interface ButtonProps {
 	onPress?: (event: GestureResponderEvent) => void;
@@ -41,7 +41,7 @@ export default function Button({
 			]}
 		>
 			{icon && (
-				<View style={styles.icon}>
+				<View>
 					{typeof icon === "function" ? icon() : icon}
 				</View>
 			)}
@@ -55,18 +55,16 @@ export default function Button({
 // Base styles
 const styles = StyleSheet.create({
 	base: {
-		flexDirection: "row",
+		flexDirection: "row-reverse",
 		alignItems: "center",
 		justifyContent: "center",
+		gap: Layout.gap.sm,
 		borderRadius: 16,
 		paddingVertical: 16,
 		paddingHorizontal: 24,
 	},
-	icon: {
-		marginRight: 8,
-	},
 	text: {
-		fontSize: 18,
+		fontSize: 16,
 		color: Colors.white,
 	},
 	disabled: {
