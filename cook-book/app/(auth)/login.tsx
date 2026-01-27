@@ -1,13 +1,12 @@
 import React, { useCallback, useState } from "react";
 import {
-	ActivityIndicator,
 	Keyboard,
 	StyleSheet,
 	TouchableWithoutFeedback,
 	View,
 } from "react-native";
 import PageWithIcons from "@/components/PageWithIcons";
-import { ArrowLeft, createLucideIcon, Loader2 } from "lucide-react-native";
+import { ArrowLeft } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import Text from "@/components/Text";
 import Link from "@/components/Link";
@@ -18,7 +17,6 @@ import { toast } from "sonner-native";
 import Spinner from "@/components/Spinner";
 import { supabase } from "@/lib/supabase";
 
-createLucideIcon;
 export default function Login() {
 	const router = useRouter();
 
@@ -126,7 +124,7 @@ export default function Login() {
 						></InputField>
 					</View>
 
-					<Link href="/auth/forgot">Forgot Password?</Link>
+					<Link href="/(auth)/forgot-password">Forgot Password?</Link>
 
 					<Button
 						onPress={handleLogin}
@@ -139,7 +137,7 @@ export default function Login() {
 					<View style={styles.notAMember}>
 						<Text>
 							Not a member?{" "}
-							<Link href="/auth/register" replace>
+							<Link href="/(auth)/register" replace>
 								Sign Up
 							</Link>
 						</Text>

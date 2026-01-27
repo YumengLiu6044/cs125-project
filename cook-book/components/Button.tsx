@@ -6,7 +6,7 @@ import {
 	GestureResponderEvent,
 	ViewStyle,
 } from "react-native";
-import CustomText from "./Text";
+import Text from "./Text";
 import { Colors, Layout } from "@/constants/theme";
 
 interface ButtonProps {
@@ -24,7 +24,7 @@ export default function Button({
 	icon,
 	disabled = false,
 	style,
-	children
+	children,
 }: ButtonProps) {
 	const selectedStyle = ButtonStyles[variant];
 
@@ -40,14 +40,10 @@ export default function Button({
 				style,
 			]}
 		>
-			{icon && (
-				<View>
-					{typeof icon === "function" ? icon() : icon}
-				</View>
-			)}
-			<CustomText weight="bold" style={[styles.text, selectedStyle.text]}>
+			{icon && <View>{typeof icon === "function" ? icon() : icon}</View>}
+			<Text weight="bold" style={[styles.text, selectedStyle.text]}>
 				{children}
-			</CustomText>
+			</Text>
 		</Pressable>
 	);
 }

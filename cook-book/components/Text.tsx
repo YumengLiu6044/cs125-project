@@ -7,6 +7,7 @@ interface CustomTextProps extends TextProps {
 	weight?: FontWeight;
 	size?: number;
 	style?: StyleProp<TextStyle>;
+	color?: TextStyle["color"];
 }
 
 const fontFamilyMap: Record<FontWeight, string> = {
@@ -17,13 +18,19 @@ const fontFamilyMap: Record<FontWeight, string> = {
 	bold: "DMSans_700Bold",
 };
 
-export default function CustomText({
+export default function Text({
 	weight = "regular",
-	size=16,
+	size = 16,
 	style,
+	color,
 	...props
 }: CustomTextProps) {
 	const fontFamily = fontFamilyMap[weight];
 
-	return <RNText {...props} style={[{ fontFamily, fontSize: size }, style]} />;
+	return (
+		<RNText
+			{...props}
+			style={[{ fontFamily, fontSize: size, color }, style]}
+		/>
+	);
 }

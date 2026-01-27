@@ -1,4 +1,10 @@
-import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import {
+	Pressable,
+	StyleProp,
+	StyleSheet,
+	View,
+	ViewStyle,
+} from "react-native";
 import { Container } from "./Container";
 import { Layout } from "@/constants/theme";
 import { ReactNode } from "react";
@@ -20,14 +26,18 @@ export default function PageWithIcons({
 	rightIcon,
 	onLeftIconClick,
 	onRightIconClick,
-	style
+	style,
 }: PageWithIconsProps) {
 	return (
 		<Container style={styles.outerView}>
 			<View style={styles.iconView}>
-				<Pressable onPress={onLeftIconClick}>{leftIcon}</Pressable>
+				<Pressable onPress={onLeftIconClick}>
+					<View>{leftIcon}</View>
+				</Pressable>
 				<View style={styles.spacerView}></View>
-				<Pressable onPress={onRightIconClick}>{rightIcon}</Pressable>
+				<Pressable onPress={onRightIconClick}>
+					<View>{rightIcon}</View>
+				</Pressable>
 			</View>
 			<View style={[styles.contentView, style]}>{children}</View>
 		</Container>
@@ -39,6 +49,7 @@ const styles = StyleSheet.create({
 		padding: Layout.padding.md,
 		display: "flex",
 		flexDirection: "column",
+		gap: Layout.gap.sm
 	},
 	iconView: {
 		display: "flex",

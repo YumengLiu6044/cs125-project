@@ -9,7 +9,13 @@ export default function Layout() {
 				animation: "none",
 			}}
 		>
-			<Stack.Screen name="index"></Stack.Screen>
+			<Stack.Screen
+				name="index"
+				options={{
+					animation: "slide_from_right",
+					gestureEnabled: false,
+				}}
+			></Stack.Screen>
 			<Stack.Screen
 				name="login"
 				options={{
@@ -19,6 +25,20 @@ export default function Layout() {
 			></Stack.Screen>
 			<Stack.Screen
 				name="register"
+				options={{
+					gestureEnabled: true,
+					animation: "slide_from_right",
+				}}
+			></Stack.Screen>
+			<Stack.Screen
+				name="forgot-password"
+				options={{
+					gestureEnabled: true,
+					animation: "slide_from_right",
+				}}
+			></Stack.Screen>
+			<Stack.Screen
+				name="reset-password"
 				options={{
 					gestureEnabled: true,
 					animation: "slide_from_right",

@@ -91,7 +91,7 @@ export default function Register() {
 					return;
 				}
 
-				router.replace("/onboarding");
+				router.navigate("/welcome");
 			})
 			.catch((e) => {
 				toast.error(e?.message ?? "Something went wrong");
@@ -169,7 +169,7 @@ export default function Register() {
 					<View style={styles.notAMember}>
 						<Text>
 							Already a member?{" "}
-							<Link href="/auth/login" replace>
+							<Link href="/(auth)/login" replace>
 								Login
 							</Link>
 						</Text>

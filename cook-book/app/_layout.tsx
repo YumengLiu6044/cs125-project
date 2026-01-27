@@ -13,17 +13,15 @@ function RootNavigator() {
 		<Stack
 			screenOptions={{
 				headerShown: false,
-				contentStyle: { 
-					backgroundColor: Colors.globalBackground 
+				contentStyle: {
+					backgroundColor: Colors.globalBackground,
 				},
 			}}
 		>
-			<Stack.Protected guard={!isLoggedIn}>
-				<Stack.Screen name="auth" />
-			</Stack.Protected>
-
+			<Stack.Screen name="index"></Stack.Screen>
+			<Stack.Screen name="(auth)"></Stack.Screen>
+			<Stack.Screen name="(onboarding)"></Stack.Screen>
 			<Stack.Protected guard={isLoggedIn}>
-				<Stack.Screen name="onboarding"></Stack.Screen>
 				<Stack.Screen name="home"></Stack.Screen>
 			</Stack.Protected>
 		</Stack>

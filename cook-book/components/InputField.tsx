@@ -10,7 +10,7 @@ import {
 import { CircleCheck, Eye, EyeOff, Info } from "lucide-react-native";
 import { Colors } from "@/constants/theme";
 
-interface InputFieldProps {
+interface InputFieldProps extends TextInputProps {
 	value?: string;
 	placeholder?: string;
 	onChangeText?: (text: string) => void;
@@ -29,7 +29,8 @@ export default function InputField({
 	textContentType = "none",
 	autocomplete,
 	onPressIcon,
-	hasError=false
+	hasError=false,
+	...props
 }: InputFieldProps) {
 	const currentStyle = InputStyles[variant];
 
@@ -37,6 +38,7 @@ export default function InputField({
 		<View style={[styles.container, currentStyle.container]}>
 			<TextInput
 				value={value}
+				autoCapitalize={textContentType === "emailAddress" ? "none" : "words"}
 				placeholder={placeholder}
 				onChangeText={onChangeText}
 				placeholderTextColor={Colors.gray[400]}
@@ -44,6 +46,7 @@ export default function InputField({
 				secureTextEntry={variant === "passwordHide"}
 				textContentType={textContentType}
 				autoComplete={autocomplete}
+				{...props}
 			/>
 			{currentStyle.Icon && (
 				<Pressable style={styles.iconWrapper} onPress={onPressIcon}>

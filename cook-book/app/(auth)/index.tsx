@@ -20,7 +20,7 @@ export default function Index() {
 			</View>
 
 			<View style={styles.getStartedView}>
-				<Link href="/auth/register" asChild>
+				<Link href="/(auth)/register" asChild>
 					<Button
 						style={styles.getStartedButton}
 					>
@@ -31,7 +31,7 @@ export default function Index() {
 					<Text style={styles.alreadyAMemberText}>
 						Already a member?
 					</Text>
-					<Link href="/auth/login">Login</Link>
+					<Link href="/(auth)/login">Login</Link>
 				</View>
 			</View>
 		</Container>
