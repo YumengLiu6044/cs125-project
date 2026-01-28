@@ -44,6 +44,9 @@ export default function Register() {
 	const handleRegister = useCallback(() => {
 		Keyboard.dismiss();
 
+		router.navigate("/welcome")
+		return
+
 		// Reset errors
 		setFullNameError(false);
 		setEmailError(false);
@@ -115,7 +118,7 @@ export default function Register() {
 	}, []);
 
 	return (
-		<PageWithIcons leftIcon={<ArrowLeft />} onLeftIconClick={router.back}>
+		<PageWithIcons leftIcon={<ArrowLeft />} onLeftIconClick={router.dismissAll}>
 			<TouchableWithoutFeedback
 				onPress={Keyboard.dismiss}
 				accessible={false}

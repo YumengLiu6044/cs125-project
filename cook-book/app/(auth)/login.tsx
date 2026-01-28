@@ -92,7 +92,7 @@ export default function Login() {
 	return (
 		<PageWithIcons
 			leftIcon={<ArrowLeft></ArrowLeft>}
-			onLeftIconClick={router.back}
+			onLeftIconClick={router.dismissAll}
 		>
 			<TouchableWithoutFeedback
 				onPress={Keyboard.dismiss}

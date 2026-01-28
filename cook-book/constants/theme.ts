@@ -3,6 +3,7 @@ export const Colors = {
 	black: "#000",
 	white: "#fff",
 	orange: {
+		100: "#FFE4C2",
 		500: "#F58700",
 		600: "#C26B00",
 	},
@@ -23,7 +24,7 @@ export const Colors = {
 		500: "#E64341",
 	},
 	green: {
-		500: "#00c951",
+		500: "#33995B",
 	},
 } as const;
 
@@ -54,7 +55,16 @@ export const Layout = {
 		lg: 24,
 		xl: 32,
 	},
+
+	border: {
+		none: 0,
+		xs: 0.5,
+		sm: 1,
+		md: 1.5,
+		lg: 2,
+	},
 } as const;
+
 
 export const Typography = {
   fontFamily: {
