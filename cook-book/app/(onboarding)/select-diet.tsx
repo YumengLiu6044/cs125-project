@@ -159,7 +159,7 @@ export default function SelectDiet() {
 
 	return (
 		<PageWithIcons
-			leftIcon={<ArrowLeft color={"black"}></ArrowLeft>}
+			leftIcon={<ArrowLeft color={Colors.black}></ArrowLeft>}
 			onLeftIconClick={handleLeftArrowClick}
 			style={styles.outerView}
 		>

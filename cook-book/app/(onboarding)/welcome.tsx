@@ -58,7 +58,7 @@ export default function WelcomeSlides() {
 
 	return (
 		<PageWithIcons
-			leftIcon={<ArrowLeft></ArrowLeft>}
+			leftIcon={<ArrowLeft color={Colors.black}></ArrowLeft>}
 			onLeftIconClick={handleLeftArrowClick}
 			style={styles.outerView}
 		>

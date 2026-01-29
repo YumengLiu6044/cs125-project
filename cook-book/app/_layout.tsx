@@ -19,7 +19,6 @@ function RootNavigator() {
 				},
 			}}
 		>
-			<Stack.Screen name="index"></Stack.Screen>
 			<Stack.Screen name="(auth)"></Stack.Screen>
 			<Stack.Screen name="(onboarding)"></Stack.Screen>
 			<Stack.Protected guard={isLoggedIn}>

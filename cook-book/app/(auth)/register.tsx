@@ -10,7 +10,7 @@ import { ArrowLeft } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import Text from "@/components/Text";
 import Link from "@/components/Link";
-import { Layout, Typography } from "@/constants";
+import { Colors, Layout, Typography } from "@/constants";
 import InputField, { InputStyles } from "@/components/InputField";
 import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
@@ -108,7 +108,7 @@ export default function Register() {
 
 	return (
 		<PageWithIcons
-			leftIcon={<ArrowLeft />}
+			leftIcon={<ArrowLeft color={Colors.black}></ArrowLeft>}
 			onLeftIconClick={router.dismissAll}
 		>
 			<TouchableWithoutFeedback

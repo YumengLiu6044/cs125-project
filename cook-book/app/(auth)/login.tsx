@@ -10,7 +10,7 @@ import { ArrowLeft } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import Text from "@/components/Text";
 import Link from "@/components/Link";
-import { Layout, Typography } from "@/constants";
+import { Colors, Layout, Typography } from "@/constants";
 import InputField, { InputStyles } from "@/components/InputField";
 import Button from "@/components/Button";
 import { toast } from "sonner-native";
@@ -68,7 +68,7 @@ export default function Login() {
 				const { login } = useAuthStore.getState();
 				login(e.data.access_token);
 
-				router.replace("/home");
+				router.replace("/home/recipes");
 			})
 			.catch(e =>toast.error(e.message))
 			.finally(() => setIsLoading(false));
@@ -92,7 +92,7 @@ export default function Login() {
 
 	return (
 		<PageWithIcons
-			leftIcon={<ArrowLeft></ArrowLeft>}
+			leftIcon={<ArrowLeft color={Colors.black}></ArrowLeft>}
 			onLeftIconClick={router.dismissAll}
 		>
 			<TouchableWithoutFeedback
