@@ -1,5 +1,5 @@
 from pymongo import AsyncMongoClient
-from .constants import DATABASE_URL, DATABASE_NAME
+from .constants import COLLECTIONS, DATABASE_URL, DATABASE_NAME
 
 
 class MongoDBClient:
@@ -19,18 +19,9 @@ class MongoDBClient:
 
         return self._client[DATABASE_NAME]
 
+    @property
+    def users(self):
+        return self.database[COLLECTIONS.USERS]
 
 
 mongo = MongoDBClient()
-
-
-if __name__ == '__main__':
-    import asyncio
-
-    async def check():
-        await mongo.connect()
-        print(await mongo.database.list_collection_names())
-        await mongo.disconnect()
-
-
-    asyncio.run(check())

@@ -7,7 +7,7 @@ import {
 	ViewStyle,
 } from "react-native";
 import Text from "./Text";
-import { Colors, Layout } from "@/constants/theme";
+import { Colors, Layout } from "@/constants";
 
 interface ButtonProps {
 	onPress?: (event: GestureResponderEvent) => void;

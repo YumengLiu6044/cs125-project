@@ -8,7 +8,7 @@ import {
 	Pressable,
 } from "react-native";
 import { CircleCheck, Eye, EyeOff, Info } from "lucide-react-native";
-import { Colors } from "@/constants/theme";
+import { Colors } from "@/constants";
 
 interface InputFieldProps extends TextInputProps {
 	value?: string;
@@ -29,7 +29,7 @@ export default function InputField({
 	textContentType = "none",
 	autocomplete,
 	onPressIcon,
-	hasError=false,
+	hasError = false,
 	...props
 }: InputFieldProps) {
 	const currentStyle = InputStyles[variant];
@@ -38,11 +38,17 @@ export default function InputField({
 		<View style={[styles.container, currentStyle.container]}>
 			<TextInput
 				value={value}
-				autoCapitalize={textContentType === "emailAddress" ? "none" : "words"}
+				autoCapitalize={
+					textContentType === "emailAddress" ? "none" : "words"
+				}
 				placeholder={placeholder}
 				onChangeText={onChangeText}
 				placeholderTextColor={Colors.gray[400]}
-				style={[styles.input, currentStyle.input, hasError && styles.errorStyle]}
+				style={[
+					styles.input,
+					currentStyle.input,
+					hasError && styles.errorStyle,
+				]}
 				secureTextEntry={variant === "passwordHide"}
 				textContentType={textContentType}
 				autoComplete={autocomplete}
@@ -78,8 +84,8 @@ const styles = StyleSheet.create({
 		transform: [{ translateY: -10 }], // vertically center assuming icon ~20px
 	},
 	errorStyle: {
-		borderColor: Colors.red[500]
-	}
+		borderColor: Colors.red[500],
+	},
 });
 
 // Styles adapted from Tailwind-like system

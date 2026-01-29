@@ -1,4 +1,4 @@
-import { Colors, Layout } from "@/constants/theme";
+import { Colors, Layout } from "@/constants";
 import { useDeviceContext } from "@/context/useDeviceContext";
 import { useCallback, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";

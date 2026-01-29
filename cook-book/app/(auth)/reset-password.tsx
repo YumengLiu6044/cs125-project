@@ -8,22 +8,21 @@ import {
 } from "react-native";
 import PageWithIcons from "@/components/PageWithIcons";
 import { ArrowLeft } from "lucide-react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import Text from "@/components/Text";
-import Link from "@/components/Link";
-import { Colors, Layout, Typography } from "@/constants/theme";
+import { Colors, Layout, Typography } from "@/constants";
 import InputField, { InputStyles } from "@/components/InputField";
 import Button from "@/components/Button";
 import { toast } from "sonner-native";
 import Spinner from "@/components/Spinner";
-import { supabase } from "@/lib/supabase";
+import { AuthApi } from "@/api/authApi";
 
-export default function Login() {
+export default function ResetPassword() {
 	const router = useRouter();
 
 	const [isLoading, setIsLoading] = useState(false);
 
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const { token } = useLocalSearchParams<{ token: string }>();
 
 	// Form states
 	const [password, setPassword] = useState("");
@@ -45,36 +44,21 @@ export default function Login() {
 		);
 	}, []);
 
-	useEffect(() => {
-		const { data: listener } = supabase.auth.onAuthStateChange(
-			async (event, _) => {
-				if (event === "PASSWORD_RECOVERY") setIsAuthenticated(true);
-				else {
-					setIsAuthenticated(false);
-					toast.error("Not authenticated");
-					// router.replace("/(auth)");
-				}
-			},
-		);
-
-		return () => listener.subscription.unsubscribe();
-	}, []);
-
 	const updatePassword = useCallback(async () => {
-		if (isAuthenticated) {
-			const { error } = await supabase.auth.updateUser({
-				password,
-			});
-
-			if (error) {
-				toast.error(error.message);
-				return;
-			}
+		if (token && token.length) {
+			AuthApi.resetPassword(password, token)
+				.then((e) => {
+					if (e.status === 200) {
+						toast.success("Password reset!");
+					} else {
+						toast.error("Failed to update password");
+					}
+				})
+				.catch((e) => toast.error(e.message));
 		} else {
-			toast.error("Not authenticated");
-			// router.replace("/(auth)");
+			toast.error("Token is not valid");
 		}
-	}, [isAuthenticated, password]);
+	}, [token, password]);
 
 	return (
 		<PageWithIcons

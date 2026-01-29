@@ -10,12 +10,12 @@ import { ArrowLeft } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import Text from "@/components/Text";
 import Link from "@/components/Link";
-import { Colors, Layout, Typography } from "@/constants/theme";
+import { Colors, Layout, Typography } from "@/constants";
 import InputField, { InputStyles } from "@/components/InputField";
 import Button from "@/components/Button";
 import { toast } from "sonner-native";
 import Spinner from "@/components/Spinner";
-import { supabase } from "@/lib/supabase";
+import { AuthApi } from "@/api/authApi";
 
 export default function Login() {
 	const router = useRouter();
@@ -29,25 +29,19 @@ export default function Login() {
 	const [emailError, setEmailError] = useState(false);
 
 	const handleSubmit = useCallback(() => {
-    if (!email.length) {
-      setEmailError(true);
-      toast.error("Email address is required");
-      return;
-    }
+		if (!email.length) {
+			setEmailError(true);
+			toast.error("Email address is required");
+			return;
+		}
 
-    setIsLoading(true);
+		setIsLoading(true);
 
-		supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "cookbook://reset-password"
-    })
-      .then((e) => {
-        if (e.error !== null) {
-          toast.error(e.error.message);
-        } else {
-          toast.success("Password reset link sent!");
-        }
-      })
-      .finally(() => setIsLoading(false))
+		AuthApi.forgotPassword(email)
+			.finally(() => {
+				toast.success("Password reset link sent!");
+				setIsLoading(false);
+			});
 	}, [email]);
 
 	const handleEmailChange = useCallback((text: string) => {
@@ -57,7 +51,7 @@ export default function Login() {
 
 	return (
 		<PageWithIcons
-			leftIcon={<ArrowLeft></ArrowLeft>}
+			leftIcon={<ArrowLeft color={Colors.black}></ArrowLeft>}
 			onLeftIconClick={router.back}
 		>
 			<TouchableWithoutFeedback

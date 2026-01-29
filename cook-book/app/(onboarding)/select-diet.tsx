@@ -1,4 +1,4 @@
-import { Colors, Layout, Typography } from "@/constants/theme";
+import { Colors, Layout, Typography, DIET_OPTIONS } from "@/constants";
 import { memo, useCallback, useState } from "react";
 import { Pressable, StyleSheet, View, ViewStyle } from "react-native";
 import Button from "@/components/Button";
@@ -6,7 +6,6 @@ import Text from "@/components/Text";
 import { useRouter } from "expo-router";
 import PageWithIcons from "@/components/PageWithIcons";
 import { ArrowLeft } from "lucide-react-native";
-import { DIET_OPTIONS } from "@/constants/diet-options";
 import Animated, {
 	useAnimatedStyle,
 	withTiming,

@@ -3,3 +3,14 @@ fastapi
 uvicorn
 pydantic
 dotenv
+passlib
+httpx
+pytest
+bcrypt
+python-jose[cryptography]
+python-multipart
+jinja2
+authlib
+fastapi-mail
+starlette[full]
+itsdangerous

@@ -1,4 +1,3 @@
-import { useAuth } from "@/context/AuthContext";
 import {
 	useFonts,
 	DMSans_300Light,
@@ -13,7 +12,6 @@ import { useEffect } from "react";
 SplashScreen.preventAutoHideAsync();
 
 export function SplashScreenController() {
-	const { loading: isLoadingAuth } = useAuth();
 	const [fontsLoaded] = useFonts({
 		DMSans_300Light,
 		DMSans_400Regular,
@@ -23,8 +21,8 @@ export function SplashScreenController() {
 	});
 
 	useEffect(() => {
-		if (fontsLoaded && !isLoadingAuth) SplashScreen.hide();
-	}, [fontsLoaded, isLoadingAuth]);
+		if (fontsLoaded) SplashScreen.hide();
+	}, [fontsLoaded]);
 
 	return null;
 }

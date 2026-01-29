@@ -10,12 +10,13 @@ import { ArrowLeft } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import Text from "@/components/Text";
 import Link from "@/components/Link";
-import { Layout, Typography } from "@/constants/theme";
+import { Layout, Typography } from "@/constants";
 import InputField, { InputStyles } from "@/components/InputField";
 import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
 import { toast } from "sonner-native";
-import { supabase } from "@/lib/supabase";
+import { AuthApi } from "@/api/authApi";
+import useAuthStore from "@/context/authStore";
 
 export default function Register() {
 	const router = useRouter();
@@ -43,9 +44,6 @@ export default function Register() {
 
 	const handleRegister = useCallback(() => {
 		Keyboard.dismiss();
-
-		router.navigate("/welcome")
-		return
 
 		// Reset errors
 		setFullNameError(false);
@@ -78,27 +76,18 @@ export default function Register() {
 
 		setIsLoading(true);
 
-		supabase.auth
-			.signUp({
-				email,
-				password,
-				options: {
-					data: {
-						full_name: fullName,
-					},
-				},
-			})
+		AuthApi.register(email, fullName, password)
 			.then((res) => {
-				if (res.error) {
-					toast.error(res.error.message);
+				if (res.status !== 200) {
+					toast.error("Failed to create account");
 					return;
 				}
+				const { login } = useAuthStore.getState();
+				login(res.data.access_token);
 
 				router.navigate("/welcome");
 			})
-			.catch((e) => {
-				toast.error(e?.message ?? "Something went wrong");
-			})
+			.catch((e) => toast.error(e.message))
 			.finally(() => setIsLoading(false));
 	}, [fullName, email, password]);
 
@@ -118,7 +107,10 @@ export default function Register() {
 	}, []);
 
 	return (
-		<PageWithIcons leftIcon={<ArrowLeft />} onLeftIconClick={router.dismissAll}>
+		<PageWithIcons
+			leftIcon={<ArrowLeft />}
+			onLeftIconClick={router.dismissAll}
+		>
 			<TouchableWithoutFeedback
 				onPress={Keyboard.dismiss}
 				accessible={false}

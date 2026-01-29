@@ -1,7 +1,7 @@
 import Button from "@/components/Button";
 import { Container } from "@/components/Container";
 import Text from "@/components/Text";
-import { Colors, Layout } from "@/constants/theme";
+import { Colors, Layout } from "@/constants";
 import Link from "@/components/Link";
 import { Image, StyleSheet, View } from "react-native";
 

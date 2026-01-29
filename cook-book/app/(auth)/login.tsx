@@ -10,12 +10,13 @@ import { ArrowLeft } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import Text from "@/components/Text";
 import Link from "@/components/Link";
-import { Layout, Typography } from "@/constants/theme";
+import { Layout, Typography } from "@/constants";
 import InputField, { InputStyles } from "@/components/InputField";
 import Button from "@/components/Button";
 import { toast } from "sonner-native";
 import Spinner from "@/components/Spinner";
-import { supabase } from "@/lib/supabase";
+import { AuthApi } from "@/api/authApi";
+import useAuthStore from "@/context/authStore";
 
 export default function Login() {
 	const router = useRouter();
@@ -57,19 +58,19 @@ export default function Login() {
 
 		setIsLoading(true);
 
-		supabase.auth
-			.signInWithPassword({ email, password })
+		AuthApi.login(email, password)
 			.then((e) => {
-				if (e.error !== null) {
-					toast.error(e.error.message);
+				if (e.status !== 200) {
+					toast.error("Failed to login");
 					return;
 				}
 
+				const { login } = useAuthStore.getState();
+				login(e.data.access_token);
+
 				router.replace("/home");
 			})
-			.catch((e) => {
-				toast.error(e);
-			})
+			.catch(e =>toast.error(e.message))
 			.finally(() => setIsLoading(false));
 	}, [email, password]);
 

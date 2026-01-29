@@ -7,7 +7,7 @@ import Animated, {
 	Easing,
 } from "react-native-reanimated";
 import { Loader2 } from "lucide-react-native";
-import { Colors } from "@/constants/theme";
+import { Colors } from "@/constants";
 
 type SpinnerProps = {
 	size?: number;
@@ -29,7 +29,7 @@ export default function Spinner({
 				easing: Easing.linear,
 			}),
 			-1,
-			false
+			false,
 		);
 	}, []);
 

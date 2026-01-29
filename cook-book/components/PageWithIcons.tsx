@@ -6,7 +6,7 @@ import {
 	ViewStyle,
 } from "react-native";
 import { Container } from "./Container";
-import { Layout } from "@/constants/theme";
+import { Layout } from "@/constants";
 import { ReactNode } from "react";
 
 interface PageWithIconsProps {
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 		padding: Layout.padding.md,
 		display: "flex",
 		flexDirection: "column",
-		gap: Layout.gap.sm
+		gap: Layout.gap.sm,
 	},
 	iconView: {
 		display: "flex",
