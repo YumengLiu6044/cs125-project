@@ -5,16 +5,12 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 load_dotenv()
 
-from enum import Enum
 import os
 
 FRONTEND_URL = "cookbook://"
 
 DATABASE_URL = os.getenv("MONGO_DB_URI")
 DATABASE_NAME = "cook-book-db"
-
-class COLLECTIONS(str, Enum):
-    USERS = "users"
 
 # JWT Config
 JWT_TOKEN_EXPIRATION = 60 # The expiration time in minutes

@@ -11,7 +11,7 @@ from models.auth_models import (
     AuthRegisterModel, AuthForgotPasswordModel,
     AuthResetPasswordModel
 )
-from models.db_models import UserModel
+from models.db_models import Users
 from pymongo.errors import DuplicateKeyError
 
 auth_router = APIRouter(
@@ -19,35 +19,32 @@ auth_router = APIRouter(
     tags=["auth"],
 )
 
-async def create_user(new_user: UserModel):
+async def create_user(new_user: Users):
     try:
-        insertion_result = await mongo.users.insert_one(new_user.__dict__)
+        await new_user.insert()
     except DuplicateKeyError:
         raise HTTPException(status_code=409, detail="User already exists")
 
-    return insertion_result
-
 @auth_router.post("/login")
 async def login_user(param: AuthLoginModel):
-    user_record = await mongo.users.find_one({"email": param.email})
-    if not user_record:
-        raise HTTPException(status_code=404, detail="User not found")
+    user_record = await Users.find_one(
+        {Users.email: param.email}
+    )
 
-    user_obj = UserModel(**user_record)
-    if not security_manager.verify_password(param.password, user_obj.password):
-        raise HTTPException(status_code=400, detail="Password incorrect")
+    if not user_record or not security_manager.verify_password(param.password, user_record.password):
+        raise HTTPException(status_code=400, detail="User not found or password incorrect")
 
-    token = security_manager.create_access_token(user_obj.email, JwtTokenScope.auth)
+    token = security_manager.create_access_token(user_record.email, JwtTokenScope.auth)
     return Token(access_token=token, scope=JwtTokenScope.auth)
 
 @auth_router.post("/register")
 async def register_user(param: AuthRegisterModel):
     hashed_password = security_manager.hash_password(param.password)
-    inserted = UserModel(**param.model_dump())
+    inserted = Users(**param.model_dump())
     inserted.password = hashed_password
-    insertion_result = await create_user(inserted)
+    await create_user(inserted)
 
-    if insertion_result.inserted_id:
+    if inserted.id:
         token = security_manager.create_access_token(param.email, JwtTokenScope.auth)
         return Token(access_token=token, scope=JwtTokenScope.auth)
     else:
@@ -59,7 +56,7 @@ async def forgot_password(
     background_tasks: BackgroundTasks
 ):
     user_email = param.email
-    user_record = await mongo.users.find_one({"email": user_email})
+    user_record = await Users.find_one({Users.email: user_email})
     if not user_record:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -91,12 +88,12 @@ async def reset_password(
     current_user_email: Annotated[str, Depends(security_manager.verify_reset_token)]
 ):
     new_hashed_password = security_manager.hash_password(param.new_password)
-    result = await mongo.users.update_one(
-        {"email": current_user_email},
-        {"$set": {"password": new_hashed_password}}
-    )
 
-    if result.matched_count == 0:
+    user_doc = await Users.find_one({Users.email: current_user_email})
+    if not user_doc:
         raise HTTPException(status_code=404, detail="User not found")
+
+    user_doc.password = new_hashed_password
+    await user_doc.save()
 
     return {"message": "Password reset successful"}

@@ -1,7 +1,9 @@
-from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
+import pymongo
+from beanie import Document, Indexed
+from pydantic import EmailStr, Field
 
-
-class UserModel(BaseModel):
-    email: EmailStr = Field(default=EmailStr, description="Email address")
-    username: str = Field(default=None, description="Username")
-    password: str = Field(default=None, description="Password")
+class Users(Document):
+    email: Indexed(EmailStr, unique=True, index_type=pymongo.TEXT)
+    username: Optional[str]
+    password: Optional[str]
