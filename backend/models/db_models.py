@@ -1,4 +1,3 @@
-from datetime import timedelta
 from typing import Optional, Annotated
 import pymongo
 from beanie import Document, Indexed
@@ -46,7 +45,6 @@ class Recipe(Document):
         name = "Recipes"
 
 
-# User model
 class User(Document):
     email: Indexed(str, unique=True, index_type=pymongo.ASCENDING)
     username: Optional[str]
@@ -54,6 +52,19 @@ class User(Document):
 
     class Settings:
         name = "Users"
-        use_cache = True
-        cache_expiration_time = timedelta(hours=2)
-        cache_capacity = 10
+
+
+class UserSearchPreference(Document):
+    user_id: Annotated[str, Indexed(index_type=pymongo.ASCENDING, unique=True)]
+
+    max_calories: Annotated[Optional[float], Indexed()] = float("inf")
+
+    diet_labels: Annotated[List[str], Indexed()] = []
+    health_labels: Annotated[List[str], Indexed()] = []
+    cautions: Annotated[List[str], Indexed()] = []
+    cuisine_type: Annotated[List[str], Indexed()] = []
+    meal_type: Annotated[List[str], Indexed()] = []
+    dish_type: Annotated[List[str], Indexed()] = []
+
+    class Settings:
+        name = "UserSearchPreferences"
