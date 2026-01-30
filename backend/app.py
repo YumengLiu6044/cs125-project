@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from core.constants import SESSION_SECRET
 from core.database import mongo
+from routers import user_router
 from routers.auth import auth_router
 from contextlib import asynccontextmanager
 
@@ -27,6 +28,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(user_router)
 @app.get('/')
 async def root():
     return {"message": "Welcome to Cook Book API"}
