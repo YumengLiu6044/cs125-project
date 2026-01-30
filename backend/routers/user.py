@@ -1,7 +1,5 @@
 from typing import Annotated
-
 from fastapi import APIRouter, Depends
-
 from core import security_manager
 from models.user_models import SetSearchPreferenceRequest
 
