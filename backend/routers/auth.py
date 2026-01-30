@@ -11,7 +11,7 @@ from models.auth_models import (
     AuthRegisterModel, AuthForgotPasswordModel,
     AuthResetPasswordModel
 )
-from models.db_models import Users
+from models.db_models import User
 from pymongo.errors import DuplicateKeyError
 
 auth_router = APIRouter(
@@ -19,7 +19,7 @@ auth_router = APIRouter(
     tags=["auth"],
 )
 
-async def create_user(new_user: Users):
+async def create_user(new_user: User):
     try:
         await new_user.insert()
     except DuplicateKeyError:
@@ -27,8 +27,8 @@ async def create_user(new_user: Users):
 
 @auth_router.post("/login")
 async def login_user(param: AuthLoginModel):
-    user_record = await Users.find_one(
-        {Users.email: param.email}
+    user_record = await User.find_one(
+        {User.email: param.email}
     )
 
     if not user_record or not security_manager.verify_password(param.password, user_record.password):
@@ -40,7 +40,7 @@ async def login_user(param: AuthLoginModel):
 @auth_router.post("/register")
 async def register_user(param: AuthRegisterModel):
     hashed_password = security_manager.hash_password(param.password)
-    inserted = Users(**param.model_dump())
+    inserted = User(**param.model_dump())
     inserted.password = hashed_password
     await create_user(inserted)
 
@@ -56,7 +56,7 @@ async def forgot_password(
     background_tasks: BackgroundTasks
 ):
     user_email = param.email
-    user_record = await Users.find_one({Users.email: user_email})
+    user_record = await User.find_one({User.email: user_email})
     if not user_record:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -89,7 +89,7 @@ async def reset_password(
 ):
     new_hashed_password = security_manager.hash_password(param.new_password)
 
-    user_doc = await Users.find_one({Users.email: current_user_email})
+    user_doc = await User.find_one({User.email: current_user_email})
     if not user_doc:
         raise HTTPException(status_code=404, detail="User not found")
 

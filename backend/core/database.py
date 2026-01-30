@@ -1,6 +1,6 @@
 from beanie import init_beanie
 from pymongo import AsyncMongoClient
-from models import Users
+from models import User, Recipe
 from .constants import DATABASE_URL, DATABASE_NAME
 
 
@@ -10,7 +10,7 @@ class MongoDBClient:
     async def connect(self):
         self._client = AsyncMongoClient(DATABASE_URL)
         await self._client.admin.command('ping')
-        await init_beanie(database=self.database, document_models=[Users])
+        await init_beanie(database=self.database, document_models=[User, Recipe])
 
     async def disconnect(self):
         await self._client.close()
