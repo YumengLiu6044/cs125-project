@@ -1,7 +1,7 @@
 import React from 'react'
 import { View } from 'react-native'
 
-export default function Favorites() {
+export default function Saved() {
   return (
     <View>
       

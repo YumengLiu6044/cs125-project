@@ -1,6 +1,13 @@
 import { Colors } from "@/constants";
 import { Tabs } from "expo-router";
-import { ChefHat, Heart, Settings, ShoppingBasket } from "lucide-react-native";
+import {
+	Bookmark,
+	ChefHat,
+	Heart,
+	Settings,
+	ShoppingBasket,
+	Utensils,
+} from "lucide-react-native";
 
 export default function Layout() {
 	return (
@@ -17,7 +24,7 @@ export default function Layout() {
 				options={{
 					title: "Recipes",
 					tabBarIcon: ({ color, size }) => (
-						<ChefHat color={color} size={size} />
+						<Utensils color={color} size={size} />
 					),
 				}}
 			/>
@@ -31,11 +38,16 @@ export default function Layout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="favorites"
+				name="saved"
 				options={{
-					title: "Favorites",
-					tabBarIcon: ({ color, size }) => (
-						<Heart color={color} size={size} />
+					title: "Saved",
+					tabBarIcon: ({ color, size, focused }) => (
+						<Bookmark
+							color={color}
+							size={size}
+							fillOpacity={focused ? 1 : 0}
+							fill={color}
+						/>
 					),
 				}}
 			/>
