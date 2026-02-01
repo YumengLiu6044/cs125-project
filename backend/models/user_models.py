@@ -1,13 +1,11 @@
-from typing import Optional, List
-from pydantic import BaseModel, Field
-
+from .db_models import *
 
 class SetSearchPreferenceRequest(BaseModel):
-    max_calories: Optional[float] = Field(default=None, description="Maximum calories filter")
+    max_calories: float | None = None
 
-    diet_labels: List[str] = Field(default_factory=list, description="Diet labels filter")
-    health_labels: List[str] = Field(default_factory=list, description="Health labels filter")
-    cautions: List[str] = Field(default_factory=list, description="Cautions filter")
-    cuisine_type: List[str] = Field(default_factory=list, description="Cuisine types filter")
-    meal_type: List[str] = Field(default_factory=list, description="Meal types filter")
-    dish_type: List[str] = Field(default_factory=list, description="Dish types filter")
+    diet_labels: List[DietLabel] | None = None
+    health_labels: List[HealthLabel] | None = None
+    cautions: List[Caution] | None = None
+    cuisine_type: List[CuisineType] | None = None
+    meal_type: List[MealType] | None = None
+    dish_type: List[DishType] | None = None
