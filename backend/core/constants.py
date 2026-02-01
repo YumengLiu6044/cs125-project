@@ -28,16 +28,20 @@ MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 MAIL_USERNAME = os.getenv("MAIL_USERNAME")
 MAIL_SERVER = "smtp.gmail.com"
 
-MAIL_CONFIG = ConnectionConfig(
-    MAIL_USERNAME=MAIL_USERNAME,
-    MAIL_PASSWORD=MAIL_PASSWORD,
-    MAIL_SERVER=MAIL_SERVER,
-    MAIL_PORT=587,
-    MAIL_FROM=MAIL_USERNAME,
-    MAIL_STARTTLS=True,
-    MAIL_SSL_TLS=False,
-    USE_CREDENTIALS=True,
-)
+# Only create mail config if credentials are available
+if MAIL_USERNAME and MAIL_PASSWORD:
+    MAIL_CONFIG = ConnectionConfig(
+        MAIL_USERNAME=MAIL_USERNAME,
+        MAIL_PASSWORD=MAIL_PASSWORD,
+        MAIL_SERVER=MAIL_SERVER,
+        MAIL_PORT=587,
+        MAIL_FROM=MAIL_USERNAME,
+        MAIL_STARTTLS=True,
+        MAIL_SSL_TLS=False,
+        USE_CREDENTIALS=True,
+    )
+else:
+    MAIL_CONFIG = None
 
 ASSET_PATH = pathlib.Path("./assets")
 jinja_env = Environment(
