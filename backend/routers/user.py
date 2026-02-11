@@ -50,7 +50,7 @@ async def set_user_search_preferences(
 
     if existing:
         # update existing preferences
-        for field, val in param.model_dict(exclude_unset=True):
+        for field, val in param.model_dump(exclude_unset=True).items():
             setattr(existing, field, val)
 
         await existing.save()
