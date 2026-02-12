@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional, Annotated
 import pymongo
 from beanie import Document, Indexed
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Dict
 
 # ---- Nested models -----
@@ -154,3 +154,21 @@ class UserSearchPreference(Document):
 
     class Settings:
         name = "UserSearchPreferences"
+
+
+class SavedRecipe(Document):
+    user_id: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
+    recipe_id: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
+    amount: int = 1
+
+    class Settings:
+        name = "SavedRecipes"
+        indexes = [
+            pymongo.IndexModel(
+                [
+                    ("user_id", pymongo.ASCENDING),
+                    ("recipe_id", pymongo.ASCENDING)
+                ],
+                unique=True
+            )
+        ]

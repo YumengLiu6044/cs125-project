@@ -1,6 +1,6 @@
 from beanie import init_beanie
 from pymongo import AsyncMongoClient
-from models import User, Recipe, UserSearchPreference
+from models import User, Recipe, UserSearchPreference, SavedRecipe
 from .constants import DATABASE_URL, DATABASE_NAME
 
 
@@ -13,7 +13,7 @@ class MongoDBClient:
         await init_beanie(
             database=self.database,
             document_models=[
-                User, Recipe, UserSearchPreference
+                User, Recipe, UserSearchPreference, SavedRecipe
             ]
         )
 

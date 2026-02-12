@@ -1,6 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class RecipeSearchRequest(BaseModel):
     query: str
     limit: int = 10
+
+
+class SetRecipeRequest(BaseModel):
+    recipe_id: str
+    amount: int = Field(default=1, ge=0)
