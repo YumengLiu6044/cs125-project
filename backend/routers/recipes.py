@@ -1,10 +1,15 @@
 from pprint import pprint
 from typing import Annotated
+
+import pymongo
+from beanie import SortDirection
 from bson import ObjectId
 from bson.errors import InvalidId
 from fastapi import APIRouter, Depends, HTTPException
+from pymongo.errors import DuplicateKeyError
+from beanie.operators import In
 from core import security_manager
-from models import UserSearchPreference, Recipe, SavedRecipe
+from models import UserSearchPreference, Recipe, SavedRecipe, RecipeCollection, AddCollectionRequest
 from models.recipe_models import RecipeSearchRequest, SetRecipeRequest
 
 recipe_router = APIRouter(prefix="/recipes", tags=["recipes"])
@@ -94,7 +99,7 @@ async def get_recipes(
         results[i]["_id"] = str(results[i]["_id"])
     return results
 
-@recipe_router.post("/set-recipe")
+@recipe_router.post("/saved-recipes")
 async def set_recipe(
     param: SetRecipeRequest,
     current_user: Annotated[str, Depends(security_manager.get_current_user)]
@@ -107,7 +112,11 @@ async def set_recipe(
     if not await Recipe.get(recipe_object_id):
         return HTTPException(status_code=404, detail="Recipe not found")
 
-    saved_document = await SavedRecipe.find_one(SavedRecipe.user_id == current_user, SavedRecipe.recipe_id == param.recipe_id)
+    saved_document = await SavedRecipe.find_one(
+        SavedRecipe.user_id == current_user,
+        SavedRecipe.recipe_id == param.recipe_id,
+        SavedRecipe.collection_id == param.collection_id
+    )
     if saved_document:
         if param.amount == 0:
             await saved_document.delete()
@@ -117,13 +126,79 @@ async def set_recipe(
         await saved_document.save()
 
     elif param.amount > 0:
-        await SavedRecipe(user_id=current_user, recipe_id=param.recipe_id, amount=param.amount).insert()
+        if not await RecipeCollection.get(param.collection_id):
+            return HTTPException(status_code=404, detail="Collection not found")
+
+        await SavedRecipe(
+            user_id=current_user,
+            recipe_id=param.recipe_id,
+            amount=param.amount,
+            collection_id=param.collection_id
+        ).insert()
 
     return {"message": f"Recipe {param.recipe_id} saved successfully with amount {param.amount}"}
 
-@recipe_router.get("/saved-recipes")
+@recipe_router.get("/saved-recipes/{collection_id}")
 async def get_saved_recipes(
+    collection_id: str,
     current_user: Annotated[str, Depends(security_manager.get_current_user)]
 ):
-    saved_documents = await SavedRecipe.find(SavedRecipe.user_id == current_user).to_list(None)
-    return saved_documents
+    saved_recipe_docs = await SavedRecipe.find(
+        SavedRecipe.user_id == current_user,
+        SavedRecipe.collection_id == collection_id
+    ).sort(
+        (SavedRecipe.recipe_id, SortDirection.ASCENDING)
+    ).to_list(None)
+
+    recipe_info_docs = await Recipe.find(
+        In(Recipe.id, map(lambda doc: ObjectId(doc.recipe_id), saved_recipe_docs))
+    ).sort(
+        ("id", SortDirection.ASCENDING)
+    ).to_list(None)
+
+    result = {}
+    for recipe_doc, saved_doc in zip(recipe_info_docs, saved_recipe_docs):
+        result[str(recipe_doc.id)] = {
+            "recipe_info": recipe_doc.model_dump(exclude={"id"}),
+            "amount": saved_doc.amount
+        }
+
+    return result
+
+@recipe_router.post("/collection")
+async def add_collection(
+    param: AddCollectionRequest,
+    current_user: Annotated[str, Depends(security_manager.get_current_user)]
+):
+    try:
+        doc = await RecipeCollection(user_id=current_user, collection_name=param.collection_name).insert()
+    except DuplicateKeyError:
+        return HTTPException(status_code=409, detail="Collection already exists")
+
+    return {
+        "message": f"Collection {param.collection_name} created successfully",
+        "collection_id": str(doc.id)
+    }
+
+
+@recipe_router.get("/collection")
+async def get_collections(current_user: Annotated[str, Depends(security_manager.get_current_user)]):
+    return await RecipeCollection.find(RecipeCollection.user_id == current_user).to_list(None)
+
+
+@recipe_router.delete("/collection/{collection_id}")
+async def delete_collection(
+    collection_id: str,
+    current_user: Annotated[str, Depends(security_manager.get_current_user)]
+):
+    # Delete associated saved recipes
+    await SavedRecipe.find(
+        SavedRecipe.collection_id == collection_id,
+        SavedRecipe.user_id == current_user
+    ).delete()
+
+    # Delete the collection itself
+    collection_doc = await RecipeCollection.get(collection_id)
+    await collection_doc.delete()
+
+    return {"message": f"Collection {collection_doc.collection_name} deleted successfully"}

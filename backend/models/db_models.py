@@ -159,6 +159,8 @@ class UserSearchPreference(Document):
 class SavedRecipe(Document):
     user_id: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
     recipe_id: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
+    collection_id: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
+
     amount: int = 1
 
     class Settings:
@@ -167,7 +169,25 @@ class SavedRecipe(Document):
             pymongo.IndexModel(
                 [
                     ("user_id", pymongo.ASCENDING),
-                    ("recipe_id", pymongo.ASCENDING)
+                    ("recipe_id", pymongo.ASCENDING),
+                    ("collection_id", pymongo.ASCENDING)
+                ],
+                unique=True
+            )
+        ]
+
+
+class RecipeCollection(Document):
+    user_id: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
+    collection_name: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
+
+    class Settings:
+        name = "RecipeCollections"
+        indexes = [
+            pymongo.IndexModel(
+                [
+                    ("user_id", pymongo.ASCENDING),
+                    ("collection_name", pymongo.ASCENDING)
                 ],
                 unique=True
             )
