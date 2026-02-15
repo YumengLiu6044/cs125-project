@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 class RecipeSearchRequest(BaseModel):
     query: str
     limit: int = 10
+    autocomplete: bool = True
 
 
 class SetRecipeRequest(BaseModel):

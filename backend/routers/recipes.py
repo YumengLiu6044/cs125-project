@@ -24,7 +24,7 @@ async def get_recipes(
 
     if param.query:
         must_clauses.append({
-            "autocomplete": {
+            "autocomplete" if param.autocomplete else "text": {
                 "path": "recipe_name",
                 "query": param.query
             }
