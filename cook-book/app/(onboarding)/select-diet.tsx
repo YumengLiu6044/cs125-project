@@ -11,6 +11,8 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { ScrollView } from "react-native-gesture-handler";
+import { UserApi } from "@/api/userApi";
+import { toast } from "sonner-native";
 
 const baseRowOption = {
 	paddingHorizontal: Layout.padding.lg,
@@ -132,8 +134,21 @@ export default function SelectDiet() {
 	}, [stepIndex]);
 
 	const handleContinue = useCallback(() => {
-		setStepIndex((prev) => Math.min(prev + 1, steps.length - 1));
-	}, []);
+		setStepIndex((prev) => {
+			if (prev === steps.length - 1) {
+				const requestParam = {
+					diet_labels: [...selections.diet_labels],
+					cautions: [...selections.cautions],
+					cuisine_type: [...selections.cuisine_type]
+				}
+				UserApi.setSearchPreferences(requestParam)
+				.then(() => router.replace("/home/recipes"))
+				return prev
+			} else {
+				return prev + 1
+			}
+		});
+	}, [selections]);
 
 	const toggleOption = useCallback(
 		(step: (typeof steps)[0], option: string) => {

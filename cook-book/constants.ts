@@ -188,6 +188,8 @@ export const STORAGE_KEYS = {
 };
 export const API_BASE = {
 	auth: "/auth",
+	recipes: "/recipe",
+	user: "/user"
 };
 
 export const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
