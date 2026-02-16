@@ -2,7 +2,7 @@ import pandas as pd
 import ast
 import json
 
-df = pd.read_csv("recipes-with-nutrition-sample.csv")
+df = pd.read_csv("recipes-with-nutrition.csv")
 
 label_columns = [
     "diet_labels", "health_labels", "cautions", "cuisine_type",

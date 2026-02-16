@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pymongo.errors import DuplicateKeyError
 from beanie.operators import In
 from core import security_manager
-from models import UserSearchPreference, Recipe, SavedRecipe, RecipeCollection, AddCollectionRequest
+from models import UserSearchPreference, Recipe, SavedRecipe, RecipeCollection, AddCollectionRequest, HealthLabel
 from models.recipe_models import RecipeSearchRequest, SetRecipeRequest
 
 recipe_router = APIRouter(prefix="/recipes", tags=["recipes"])
@@ -20,13 +20,20 @@ async def get_recipes(
     current_user: Annotated[str, Depends(security_manager.get_current_user)],
 ):
     must_clauses = []
+    filter_clauses = []
     must_not_clauses = []
 
     if param.query:
+        search_mode = "autocomplete" if param.autocomplete else "text"
         must_clauses.append({
-            "autocomplete" if param.autocomplete else "text": {
+            search_mode: {
                 "path": "recipe_name",
-                "query": param.query
+                "query": param.query,
+                "fuzzy": {
+                    "maxEdits": 2,
+                    "prefixLength": 0,
+                    "maxExpansions": 50
+                }
             }
         })
 
@@ -37,7 +44,7 @@ async def get_recipes(
     if prefs:
         # === 2) Numerical filter: max_calories ===
         if prefs.max_calories is not None:
-            must_clauses.append({
+            filter_clauses.append({
                 "range": {
                     "path": "calories",
                     "lte": prefs.max_calories
@@ -54,27 +61,22 @@ async def get_recipes(
             }
 
         if prefs.diet_labels:
-            must_clauses.append(array_filter("diet_labels", prefs.diet_labels))
+            filter_clauses.append(array_filter("diet_labels", prefs.diet_labels))
 
         if prefs.health_labels:
-            must_clauses.append(array_filter("health_labels", prefs.health_labels))
+            filter_clauses.append(array_filter("health_labels", prefs.health_labels))
 
         if prefs.cautions:
-            must_not_clauses.append({
-                "text": {
-                    "path": "cautions",
-                    "query": prefs.cautions,
-                }
-            })
+            must_not_clauses.append(array_filter("cautions", prefs.cautions))
 
         if prefs.cuisine_type:
-            must_clauses.append(array_filter("cuisine_type", prefs.cuisine_type))
+            filter_clauses.append(array_filter("cuisine_type", prefs.cuisine_type))
 
         if prefs.meal_type:
-            must_clauses.append(array_filter("meal_type", prefs.meal_type))
+            filter_clauses.append(array_filter("meal_type", prefs.meal_type))
 
         if prefs.dish_type:
-            must_clauses.append(array_filter("dish_type", prefs.dish_type))
+            filter_clauses.append(array_filter("dish_type", prefs.dish_type))
 
     # === 4) Build $search stage ===
     search_stage = {
@@ -82,6 +84,7 @@ async def get_recipes(
             "index": "recipes_index",
             "compound": {
                 "must": must_clauses,
+                "filter": filter_clauses,
                 "mustNot": must_not_clauses
             }
         }
@@ -92,8 +95,6 @@ async def get_recipes(
         search_stage,
         {"$limit": param.limit}
     ]
-
-    pprint(search_stage)
     results = await Recipe.aggregate(pipeline).to_list()
     for i, _ in enumerate(results):
         results[i]["_id"] = str(results[i]["_id"])

@@ -10,7 +10,7 @@ uri = os.getenv("MONGO_DB_URI")
 # Create a new client and connect to the server
 client = MongoClient(uri)
 database = client["cook-book-db"]
-collection = database["recipes"]
+collection = database["Recipes"]
 
 
 # ------------------------------
@@ -63,9 +63,6 @@ for _, row in tqdm(df.iterrows(), total=len(df)):
     for col in JSON_FIELDS:
         if col in row_dict:
             row_dict[col] = parse_json_field(row_dict[col])
-
-    # Add fields
-    row_dict["recipe_name_lower"] = row_dict["recipe_name"].lower()
 
     # Remove ignore fields
     for col in IGNORE_COLS:
