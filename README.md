@@ -29,10 +29,7 @@
 ## Preprocessing
 - Download the [dataset](https://huggingface.co/datasets/datahiveai/recipes-with-nutrition) into the preprocessing folder
 - Install the required Python dependencies (pandas, tqdm, pymongo)
-- Install the required .env file under the preprocessing folder:
-```.env
-MONGO_DB_URI=...
-```
+- Make sure to have the .env file in the backend folder
 - Run `sample.py` to create a sampled csv file
 - Run `upload.py` to upload the sampled csv file to MongoDB
 - Run `analysis.py` to create a JSON document containing all possible categorical values
