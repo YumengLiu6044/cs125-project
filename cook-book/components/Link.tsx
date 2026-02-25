@@ -1,6 +1,4 @@
 import { Link, LinkProps } from "expo-router";
-import React from "react";
-
 import { StyleSheet } from "react-native";
 import { Typography } from "@/constants";
 

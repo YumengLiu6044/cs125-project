@@ -12,17 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { ScrollView } from "react-native-gesture-handler";
 import { UserApi } from "@/api/userApi";
-import { toast } from "sonner-native";
-
-const baseRowOption = {
-	paddingHorizontal: Layout.padding.lg,
-	paddingVertical: Layout.padding.md,
-	borderRadius: Layout.radius.md,
-	borderColor: Colors.gray[200],
-	borderWidth: Layout.border.md,
-	backgroundColor: Colors.white,
-	width: "100%",
-} as ViewStyle;
+import OptionItem from "@/components/OptionItem";
 
 const styles = StyleSheet.create({
 	outerView: {
@@ -47,40 +37,25 @@ const styles = StyleSheet.create({
 		flexWrap: "wrap",
 		width: "100%",
 	},
-	fullRowOption: baseRowOption,
-	partialRowOption: {
-		...baseRowOption,
-		width: "auto",
-	},
-	selectedRowOption: {
-		borderColor: Colors.orange[500],
-		backgroundColor: Colors.orange[100],
-	},
 });
 
-function capitalizeWords(str: string) {
-	if (!str) return "";
-	return str
-		.split(" ")
-		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-		.join(" ");
-}
+
 
 const steps = [
 	{
 		title: "Pick your diet",
 		column: "diet_labels",
-		columnStyle: styles.fullRowOption,
+		isPartial: false,
 	},
 	{
 		title: "Any allergies?",
 		column: "cautions",
-		columnStyle: styles.partialRowOption,
+		isPartial: true,
 	},
 	{
 		title: "Favorite cousines?",
 		column: "cuisine_type",
-		columnStyle: styles.partialRowOption,
+		isPartial: true,
 	},
 ];
 
@@ -97,26 +72,7 @@ function ProgressBar({ active }: { active: boolean }) {
 	return <Animated.View style={[styles.progressBarActive, animatedStyle]} />;
 }
 
-const OptionItem = memo(
-	({
-		label,
-		selected,
-		onPress,
-		style,
-	}: {
-		label: string;
-		selected: boolean;
-		onPress: () => void;
-		style: ViewStyle;
-	}) => (
-		<Pressable
-			onPress={onPress}
-			style={[style, selected && styles.selectedRowOption]}
-		>
-			<Text weight="bold">{capitalizeWords(label)}</Text>
-		</Pressable>
-	),
-);
+
 
 export default function SelectDiet() {
 	const [stepIndex, setStepIndex] = useState(0);
@@ -137,9 +93,9 @@ export default function SelectDiet() {
 		setStepIndex((prev) => {
 			if (prev === steps.length - 1) {
 				const requestParam = {
-					diet_labels: [...selections.diet_labels],
-					cautions: [...selections.cautions],
-					cuisine_type: [...selections.cuisine_type]
+					diet_labels: Array.from(selections.diet_labels),
+					cautions: Array.from(selections.cautions),
+					cuisine_type: Array.from(selections.cuisine_type)
 				}
 				UserApi.setSearchPreferences(requestParam)
 				.then(() => router.replace("/home/recipes"))
@@ -205,7 +161,7 @@ export default function SelectDiet() {
 						label={option}
 						selected={selections[currentStep.column].has(option)}
 						onPress={() => toggleOption(currentStep, option)}
-						style={currentStep.columnStyle}
+						isPartial={currentStep.isPartial}
 					/>
 				))}
 			</ScrollView>

@@ -4,8 +4,15 @@ import Text from "@/components/Text";
 import { Colors, Layout } from "@/constants";
 import Link from "@/components/Link";
 import { Image, StyleSheet, View } from "react-native";
+import useAuthStore from "@/context/authStore";
+import { Redirect } from "expo-router";
 
 export default function Index() {
+	const { token } = useAuthStore();
+	if (token && token.length > 0) {
+		return <Redirect href={"/home/recipes"}></Redirect>
+	}
+
 	return (
 		<Container style={styles.outerView}>
 			<View style={styles.logoView}>
@@ -21,11 +28,7 @@ export default function Index() {
 
 			<View style={styles.getStartedView}>
 				<Link href="/(auth)/register" asChild>
-					<Button
-						style={styles.getStartedButton}
-					>
-						Get Started
-					</Button>
+					<Button style={styles.getStartedButton}>Get Started</Button>
 				</Link>
 				<View style={styles.alreadyAMemberView}>
 					<Text style={styles.alreadyAMemberText}>

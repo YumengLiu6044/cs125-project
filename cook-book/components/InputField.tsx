@@ -1,5 +1,4 @@
 // InputField.tsx
-import React from "react";
 import {
 	TextInput,
 	TextInputProps,

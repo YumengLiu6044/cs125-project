@@ -1,4 +1,3 @@
-import React from "react";
 import { Text as RNText, TextProps, StyleProp, TextStyle } from "react-native";
 
 type FontWeight = "light" | "regular" | "medium" | "semibold" | "bold";
