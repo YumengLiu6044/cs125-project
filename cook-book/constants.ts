@@ -188,7 +188,7 @@ export const STORAGE_KEYS = {
 };
 export const API_BASE = {
 	auth: "/auth",
-	recipes: "/recipe",
+	recipes: "/recipes",
 	user: "/user"
 };
 
