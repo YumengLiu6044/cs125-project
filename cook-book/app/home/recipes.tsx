@@ -93,7 +93,7 @@ export default function Recipes() {
 	return (
 		<View style={{ flex: 1 }}>
 			<PageWithIcons style={{ flex: 1, gap: Layout.gap.md }}>
-				<Text style={styles.headerStyle}>Discover Recipes</Text>
+				<Text style={styles.headerStyle}>Recipes</Text>
 				<View
 					style={[
 						{
