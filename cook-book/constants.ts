@@ -193,3 +193,5 @@ export const API_BASE = {
 };
 
 export const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
+export const RECIPE_PAGE_SIZE = 10;

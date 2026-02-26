@@ -6,7 +6,8 @@ export const RecipeApi = {
 	searchRecipes: (param: {
 		query?: string;
 		autocomplete?: boolean;
-		limit?: number;
+		page_size?: number;
+		page_index?: number;
 	}) =>
 		axiosClient.post(API_BASE.recipes + "/search", param),
 

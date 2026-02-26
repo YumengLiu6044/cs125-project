@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 class RecipeSearchRequest(BaseModel):
     query: str
-    limit: int = 10
-    page_index: int = 0
+    page_size: int = Field(default=10, ge=1)
+    page_index: int = Field(default=0, ge=0)
     autocomplete: bool = True
 
 

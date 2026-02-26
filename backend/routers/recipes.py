@@ -93,10 +93,29 @@ async def get_recipes(
     # === 5) Final aggregation pipeline ===
     pipeline = [
         search_stage,
-        {"$limit": param.limit}
+        {
+            "$facet": {
+                "totalCount": [
+                    {"$count": "count"}
+                ],
+                "recipes": [
+                    {"$sort": {"_id": 1}},
+                    {"$skip": param.page_index * param.page_size},
+                    {"$limit": param.page_size}
+                ]
+            }
+        }
     ]
-    results = await Recipe.aggregate(pipeline, projection_model=Recipe).to_list()
-    return list(json.loads(doc.model_dump_json()) for doc in results)
+
+    class CountItem(BaseModel):
+        count: int
+
+    class ProjectionModel(BaseModel):
+        recipes: list[Recipe]
+        totalCount: list[CountItem]
+
+    results = await Recipe.aggregate(pipeline, projection_model=ProjectionModel).to_list()
+    return list(json.loads(doc.model_dump_json()) for doc in results)[0]
 
 @recipe_router.post("/saved-recipes")
 async def set_recipe(
