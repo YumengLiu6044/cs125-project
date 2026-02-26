@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional, Annotated
 import pymongo
-from beanie import Document, Indexed
+from beanie import Document, Indexed, PydanticObjectId
 from pydantic import BaseModel, Field
 from typing import List, Dict
 
@@ -158,8 +158,8 @@ class UserSearchPreference(Document):
 
 class SavedRecipe(Document):
     user_id: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
-    recipe_id: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
-    collection_id: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
+    recipe_id: Annotated[PydanticObjectId, Indexed(index_type=pymongo.ASCENDING)]
+    collection_id: Annotated[PydanticObjectId, Indexed(index_type=pymongo.ASCENDING)]
 
     amount: int = 1
 

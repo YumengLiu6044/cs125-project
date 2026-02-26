@@ -1,13 +1,13 @@
-from pprint import pprint
+import json
+import pprint
 from typing import Annotated
-
-import pymongo
-from beanie import SortDirection
+from fastapi.encoders import jsonable_encoder
+from beanie import PydanticObjectId
 from bson import ObjectId
 from bson.errors import InvalidId
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from pymongo.errors import DuplicateKeyError
-from beanie.operators import In
 from core import security_manager
 from models import UserSearchPreference, Recipe, SavedRecipe, RecipeCollection, AddCollectionRequest, HealthLabel
 from models.recipe_models import RecipeSearchRequest, SetRecipeRequest
@@ -95,10 +95,8 @@ async def get_recipes(
         search_stage,
         {"$limit": param.limit}
     ]
-    results = await Recipe.aggregate(pipeline).to_list()
-    for i, _ in enumerate(results):
-        results[i]["_id"] = str(results[i]["_id"])
-    return results
+    results = await Recipe.aggregate(pipeline, projection_model=Recipe).to_list()
+    return list(json.loads(doc.model_dump_json()) for doc in results)
 
 @recipe_router.post("/saved-recipes")
 async def set_recipe(
@@ -115,8 +113,8 @@ async def set_recipe(
 
     saved_document = await SavedRecipe.find_one(
         SavedRecipe.user_id == current_user,
-        SavedRecipe.recipe_id == param.recipe_id,
-        SavedRecipe.collection_id == param.collection_id
+        SavedRecipe.recipe_id == PydanticObjectId(param.recipe_id),
+        SavedRecipe.collection_id == PydanticObjectId(param.collection_id)
     )
     if saved_document:
         if param.amount == 0:
@@ -132,9 +130,9 @@ async def set_recipe(
 
         await SavedRecipe(
             user_id=current_user,
-            recipe_id=param.recipe_id,
+            recipe_id=PydanticObjectId(param.recipe_id),
             amount=param.amount,
-            collection_id=param.collection_id
+            collection_id=PydanticObjectId(param.collection_id)
         ).insert()
 
     return {"message": f"Recipe {param.recipe_id} saved successfully with amount {param.amount}"}
@@ -144,27 +142,30 @@ async def get_saved_recipes(
     collection_id: str,
     current_user: Annotated[str, Depends(security_manager.get_current_user)]
 ):
-    saved_recipe_docs = await SavedRecipe.find(
-        SavedRecipe.user_id == current_user,
-        SavedRecipe.collection_id == collection_id
-    ).sort(
-        (SavedRecipe.recipe_id, SortDirection.ASCENDING)
-    ).to_list(None)
+    class SavedRecipeWithDetails(BaseModel):
+        user_id: str
+        collection_id: PydanticObjectId
+        recipe_id: PydanticObjectId
+        recipe_details: list[Recipe]
 
-    recipe_info_docs = await Recipe.find(
-        In(Recipe.id, map(lambda doc: ObjectId(doc.recipe_id), saved_recipe_docs))
-    ).sort(
-        ("id", SortDirection.ASCENDING)
-    ).to_list(None)
-
-    result = {}
-    for recipe_doc, saved_doc in zip(recipe_info_docs, saved_recipe_docs):
-        result[str(recipe_doc.id)] = {
-            "recipe_info": recipe_doc.model_dump(exclude={"id"}),
-            "amount": saved_doc.amount
+    saved_recipe_docs = await SavedRecipe.aggregate([
+        {
+            "$match": {
+                "user_id": current_user,
+                "collection_id": PydanticObjectId(collection_id),
+            }
+        },
+        {
+            "$lookup": {
+                "from": Recipe.Settings.name,
+                "localField": "recipe_id",
+                "foreignField": "_id",
+                "as": "recipe_details",
+            }
         }
+    ], projection_model=SavedRecipeWithDetails).to_list()
 
-    return result
+    return list(json.loads(doc.model_dump_json()) for doc in saved_recipe_docs)
 
 @recipe_router.post("/collection")
 async def add_collection(
@@ -194,7 +195,7 @@ async def delete_collection(
 ):
     # Delete associated saved recipes
     await SavedRecipe.find(
-        SavedRecipe.collection_id == collection_id,
+        SavedRecipe.collection_id == PydanticObjectId(collection_id),
         SavedRecipe.user_id == current_user
     ).delete()
 
