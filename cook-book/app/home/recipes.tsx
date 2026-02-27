@@ -8,7 +8,7 @@ import {
 	Typography,
 } from "@/constants";
 import { Flame, Search, Settings2, Users, X } from "lucide-react-native";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	Pressable,
 	StyleSheet,
@@ -67,6 +67,15 @@ export default function Recipes() {
 				query: debouncedString,
 				page_index: pageIndex,
 				autocomplete: false,
+				...Object.fromEntries(
+					Object.entries(selectedFilters).map(
+						([filterKey, options]) => [
+							filterKey,
+							Array.from(options),
+						],
+					),
+				)
+
 			})
 				.then((response) => {
 					const data = response.data;
@@ -75,7 +84,7 @@ export default function Recipes() {
 				})
 				.finally(() => setIsLoadingQuery(false));
 		},
-		[],
+		[selectedFilters],
 	);
 
 	const handleOnEndReached = useCallback(() => {
@@ -83,10 +92,19 @@ export default function Recipes() {
 
 		setIsLoadingExtra(true);
 		setPageIndex((prev) => {
+			console.log("Loading page: ", prev + 1)
 			RecipeApi.searchRecipes({
 				query: debouncedString,
 				page_index: prev + 1,
 				autocomplete: false,
+				...Object.fromEntries(
+					Object.entries(selectedFilters).map(
+						([filterKey, options]) => [
+							filterKey,
+							Array.from(options),
+						],
+					),
+				)
 			})
 				.then((response) => {
 					setSearchResult((prevResult) => [
@@ -98,7 +116,7 @@ export default function Recipes() {
 
 			return prev + 1;
 		});
-	}, [debouncedString, isEndReached]);
+	}, [debouncedString, isEndReached, selectedFilters]);
 
 	useEffect(() => {
 		const handler = setTimeout(() => setDebouncedString(searchString), 200);
@@ -149,11 +167,14 @@ export default function Recipes() {
 		[],
 	);
 
-	const handleApplyFilter = useCallback(async () => {
+	const handleApplyFilter = useCallback(() => {
+		setPageIndex(0);
+		setTotalSearchResultCount(0);
+
 		setIsLoadingFilter(true);
 
 		try {
-			await UserApi.setSearchPreferences(
+			UserApi.setSearchPreferences(
 				Object.fromEntries(
 					Object.entries(selectedFilters).map(
 						([filterKey, options]) => [
@@ -164,12 +185,12 @@ export default function Recipes() {
 				),
 			);
 
-			updateSearchResult(debouncedString, pageIndex);
+			updateSearchResult(debouncedString, 0);
 		} finally {
 			setIsLoadingFilter(false);
 			bottomSheetRef.current?.close();
 		}
-	}, [selectedFilters, debouncedString, updateSearchResult, pageIndex]);
+	}, [selectedFilters, debouncedString, updateSearchResult]);
 
 	return (
 		<View style={{ flex: 1 }}>

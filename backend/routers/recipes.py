@@ -1,7 +1,5 @@
 import json
-import pprint
 from typing import Annotated
-from fastapi.encoders import jsonable_encoder
 from beanie import PydanticObjectId
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -9,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from pymongo.errors import DuplicateKeyError
 from core import security_manager
-from models import UserSearchPreference, Recipe, SavedRecipe, RecipeCollection, AddCollectionRequest, HealthLabel
+from models import Recipe, SavedRecipe, RecipeCollection, AddCollectionRequest
 from models.recipe_models import RecipeSearchRequest, SetRecipeRequest
 
 recipe_router = APIRouter(prefix="/recipes", tags=["recipes"])
@@ -37,46 +35,41 @@ async def get_recipes(
             }
         })
 
-    prefs: UserSearchPreference = await UserSearchPreference.find_one(
-        UserSearchPreference.user_id == current_user
-    )
-
-    if prefs:
-        # === 2) Numerical filter: max_calories ===
-        if prefs.max_calories is not None:
-            filter_clauses.append({
-                "range": {
-                    "path": "calories",
-                    "lte": prefs.max_calories
-                }
-            })
-
-        # === 3) Array-field filters (Atlas Search 'equals' inside array) ===
-        def array_filter(field_name, values):
-            return {
-                "text": {
-                    "path": field_name,
-                    "query": values,
-                }
+    # === 2) Numerical filter: max_calories ===
+    if param.max_calories is not None:
+        filter_clauses.append({
+            "range": {
+                "path": "calories",
+                "lte": param.max_calories
             }
+        })
 
-        if prefs.diet_labels:
-            filter_clauses.append(array_filter("diet_labels", prefs.diet_labels))
+    # === 3) Array-field filters (Atlas Search 'equals' inside array) ===
+    def array_filter(field_name, values):
+        return {
+            "text": {
+                "path": field_name,
+                "query": values,
+            }
+        }
 
-        if prefs.health_labels:
-            filter_clauses.append(array_filter("health_labels", prefs.health_labels))
+    if param.diet_labels:
+        filter_clauses.append(array_filter("diet_labels", param.diet_labels))
 
-        if prefs.cautions:
-            must_not_clauses.append(array_filter("cautions", prefs.cautions))
+    if param.health_labels:
+        filter_clauses.append(array_filter("health_labels", param.health_labels))
 
-        if prefs.cuisine_type:
-            filter_clauses.append(array_filter("cuisine_type", prefs.cuisine_type))
+    if param.cautions:
+        must_not_clauses.append(array_filter("cautions", param.cautions))
 
-        if prefs.meal_type:
-            filter_clauses.append(array_filter("meal_type", prefs.meal_type))
+    if param.cuisine_type:
+        filter_clauses.append(array_filter("cuisine_type", param.cuisine_type))
 
-        if prefs.dish_type:
-            filter_clauses.append(array_filter("dish_type", prefs.dish_type))
+    if param.meal_type:
+        filter_clauses.append(array_filter("meal_type", param.meal_type))
+
+    if param.dish_type:
+        filter_clauses.append(array_filter("dish_type", param.dish_type))
 
     # === 4) Build $search stage ===
     search_stage = {

@@ -8,6 +8,16 @@ export const RecipeApi = {
 		autocomplete?: boolean;
 		page_size?: number;
 		page_index?: number;
+
+		// Filters
+		max_calories?: number | null;
+
+		diet_labels?: string[];
+		health_labels?: string[];
+		cautions?: string[];
+		cuisine_type?: string[];
+		meal_type?: string[];
+		dish_type?: string[];
 	}) =>
 		axiosClient.post(API_BASE.recipes + "/search", param),
 
